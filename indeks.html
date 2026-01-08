@@ -1,0 +1,178 @@
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Digital Clock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --accent-color: #38bdf8;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        /* Latar Belakang Partikel */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Container */
+        .glass-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            min-width: 320px;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Tipografi Jam */
+        .clock-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .date-text {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin-top: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .seconds {
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+
+        /* Badge Detik Berputar */
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 105%;
+            height: 105%;
+            border-radius: 2rem;
+            border: 2px solid var(--accent-color);
+            opacity: 0.2;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
+        }
+
+        @media (max-width: 640px) {
+            .clock-text { font-size: 3.5rem; }
+            .glass-container { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animasi Latar Belakang -->
+    <div id="particles-js"></div>
+
+    <div class="glass-container">
+        <div class="glow-ring"></div>
+        
+        <div id="day" class="text-sky-400 font-semibold mb-2 tracking-widest text-sm uppercase">
+            Memuat Hari...
+        </div>
+        
+        <div class="clock-text">
+            <span id="hours">00</span>:<span id="minutes">00</span><span class="seconds">:<span id="seconds">00</span></span>
+        </div>
+
+        <div id="date" class="date-text">
+            Memuat Tanggal...
+        </div>
+        
+        <div class="mt-8 text-xs text-slate-500 font-light">
+            Dibuat dengan ❤️ oleh Gemini
+        </div>
+    </div>
+
+    <!-- Script untuk Partikel (menggunakan cdn) -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Konfigurasi Partikel
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#38bdf8" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true }
+            },
+            "retina_detect": true
+        });
+
+        // Fungsi Update Jam
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Waktu
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+
+            // Format Tanggal Indonesia
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const fullDate = now.toLocaleDateString('id-ID', options);
+            const dayName = now.toLocaleDateString('id-ID', { weekday: 'long' });
+            const dateOnly = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            document.getElementById('day').textContent = dayName;
+            document.getElementById('date').textContent = dateOnly;
+        }
+
+        // Jalankan setiap detik
+        setInterval(updateClock, 1000);
+        updateClock(); // Jalankan langsung saat load
+    </script>
+</body>
+</html>
